@@ -9,7 +9,7 @@ import { TOTAL_QUESTIONS, PASS_PERCENTAGE } from "@/lib/constants"
 
 const HIGHLIGHTS = [
   `${TOTAL_QUESTIONS} Beginner Friendly Questions`,
-  "HTML, CSS & JavaScript",
+  "HTML, CSS, JavaScript & Python",
   `Certificate for ${PASS_PERCENTAGE}% & Above`,
 ] as const
 
@@ -88,7 +88,7 @@ export default async function LandingPage() {
 
               {/* Subtitle */}
               <p id="about" className="mt-5 max-w-[48ch] scroll-mt-24 text-base leading-relaxed text-ink-muted sm:text-lg">
-                Test your HTML, CSS &amp; JavaScript skills and earn your certificate.
+                Test your HTML, CSS, JavaScript and Python skills across four sessions, and earn your certificate.
               </p>
 
               {/* Highlights Checklist */}
@@ -145,7 +145,7 @@ export default async function LandingPage() {
       {/* Footer */}
       <footer id="contact" className="border-t border-line/60 px-5 py-6 sm:px-8">
         <p className="mx-auto max-w-7xl text-xs text-ink-faint">
-          {workshop} · HTML, CSS &amp; JavaScript
+          {workshop} · HTML, CSS, JavaScript &amp; Python
         </p>
       </footer>
     </div>

@@ -9,7 +9,7 @@ export const metadata: Metadata = {
     template: "%s · Web Development Workshop",
   },
   description:
-    "A two-day workshop on HTML, CSS and JavaScript for first-year students. Take the quiz, get your result instantly, earn your certificate.",
+    "A two-day workshop on HTML, CSS, JavaScript and Python for first-year students. Four quizzes, instant results, and a certificate at 70%.",
   robots: { index: false, follow: false },
 }
 

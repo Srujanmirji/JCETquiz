@@ -44,7 +44,7 @@ export function StudentShell({
 
       <footer className="border-t border-line px-5 py-6">
         <p className="mx-auto max-w-6xl text-xs text-ink-faint">
-          Web Development Workshop · HTML, CSS &amp; JavaScript
+          Web Development Workshop · HTML, CSS, JavaScript &amp; Python
         </p>
       </footer>
     </div>

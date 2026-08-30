@@ -11,6 +11,17 @@ export async function middleware(request: NextRequest) {
   const { response, user } = await updateSession(request)
   const { pathname, search } = request.nextUrl
 
+  // Supabase falls back to the project's Site URL when the requested redirect
+  // is not on the allow list — dropping ?code= on whatever page that is, where
+  // nothing exchanges it and the user appears to be silently logged out.
+  // Forward it to the real callback rather than leaving a dead end.
+  const strayCode = request.nextUrl.searchParams.get("code")
+  if (strayCode && pathname !== "/auth/callback") {
+    const url = request.nextUrl.clone()
+    url.pathname = "/auth/callback"
+    return NextResponse.redirect(url)
+  }
+
   const isProtected =
     pathname.startsWith("/dashboard") ||
     pathname.startsWith("/quiz") ||
