@@ -111,9 +111,6 @@ const styles = StyleSheet.create({
     paddingTop: 14,
   },
   footerCol: { width: 190 },
-  sigLine: { height: 0.8, backgroundColor: INK, marginBottom: 6 },
-  sigName: { fontSize: 10, fontFamily: "Helvetica-Bold", color: INK },
-  sigTitle: { fontSize: 8.5, color: MUTED, marginTop: 2 },
   metaLabel: { fontSize: 7.5, color: MUTED, letterSpacing: 1.2, textTransform: "uppercase" },
   metaValue: { fontSize: 9.5, color: INK, marginTop: 3 },
   certId: { fontSize: 8, color: MUTED, fontFamily: "Courier", marginTop: 3 },
@@ -232,13 +229,7 @@ export function CertificateDocument(data: CertificateData) {
         </View>
 
         <View style={styles.footer}>
-          <View style={styles.footerCol}>
-            <View style={styles.sigLine} />
-            <Text style={styles.sigName}>{data.organizerName}</Text>
-            <Text style={styles.sigTitle}>{data.organizerTitle}</Text>
-          </View>
-
-          <View style={{ alignItems: "center" }}>
+          <View style={{ alignItems: "flex-start" }}>
             <Seal />
           </View>
 
