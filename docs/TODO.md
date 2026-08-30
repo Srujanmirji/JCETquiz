@@ -19,6 +19,7 @@
 
 ## Before the event
 
+- [x] Apply `20260830160253_answer_review.sql` to the Quiz Supabase project; verify server-only RPC access and closed-session gates (isolated PostgreSQL tests plus live permission/REST checks).
 - [ ] Add `http://localhost:3000/auth/callback` (and the production URL) under
       Auth → URL Configuration
 - [ ] Sign in with an organiser account to confirm admin auto-promotion

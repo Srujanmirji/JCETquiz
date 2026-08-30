@@ -1,4 +1,5 @@
 import type { Metadata } from "next"
+import { Suspense } from "react"
 import Link from "next/link"
 import { notFound, redirect } from "next/navigation"
 import { ArrowRight, Check } from "lucide-react"
@@ -10,6 +11,8 @@ import { Panel, Card } from "@/components/ui/surface"
 import { Button } from "@/components/ui/button"
 import { ScoreDisplay } from "@/components/result/score-display"
 import { SignOutButton } from "@/components/marketing/sign-out-button"
+import { AnswerReviewSection } from "@/components/result/answer-review-section"
+import { AnswerReviewLoading } from "@/components/result/answer-review"
 
 export const dynamic = "force-dynamic"
 
@@ -107,6 +110,10 @@ export default async function QuizResultPage({ params }: { params: Promise<{ slu
             </li>
           ))}
         </ol>
+
+        <Suspense fallback={<AnswerReviewLoading />}>
+          <AnswerReviewSection profileId={user.id} slug={slug} />
+        </Suspense>
       </div>
     </StudentShell>
   )

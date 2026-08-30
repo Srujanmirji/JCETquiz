@@ -162,3 +162,18 @@ export interface QuizResult {
   totalQuestions: number
   percentage: number
 }
+
+/** Released only by quiz_answer_review after its database access checks. */
+export interface ReviewedQuestion {
+  id: string
+  question_text: string
+  options: [string, string, string, string]
+  selected_option: number | null
+  correct_option: number
+  is_correct: boolean
+  explanation: string | null
+}
+
+export type AnswerReview =
+  | { state: "available"; questions: ReviewedQuestion[] }
+  | { state: "session_open" | "awaiting_submissions" | "not_completed"; questions: [] }

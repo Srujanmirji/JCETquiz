@@ -47,7 +47,7 @@ Use Supabase server-side access for:
 Participants can read and update their own profile. They cannot change their user ID or email.
 
 ### Questions
-Participants can read active questions and public question fields, but never correct answers.
+Participants can read active questions and public question fields, but cannot read answer-key columns directly. Post-session answer review is released only through the server-gated RPC described in `docs/SECURITY.md`.
 
 ### Attempts
 Participants can read their own completed attempt. They cannot edit a completed attempt.
@@ -60,4 +60,4 @@ Participants can read their own certificate status. Only authorized admins can c
 
 ## Important security rule
 
-Do not ship `correct_option` to the student frontend. The browser should receive only question text and public options.
+During quizzes, do not ship `correct_option` or explanations to the student frontend. The quiz runner receives only question text and public options. The separate answer-review surface may receive the key only after all database review gates pass.

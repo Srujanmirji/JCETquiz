@@ -109,6 +109,11 @@ export default async function FinalResultPage() {
                       Session missed
                     </p>
                   )}
+                  {q.state === "completed" && (
+                    <a href={`/result/${q.slug}#answer-review`} className="inline-flex min-h-11 items-center text-sm text-accent-soft underline underline-offset-4 hover:text-ink">
+                      Review {q.title}
+                    </a>
+                  )}
                 </li>
               )
             })}

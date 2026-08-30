@@ -3,6 +3,7 @@ import "server-only"
 import { createAdminClient } from "@/lib/supabase/admin"
 import type { QuizSlug } from "@/lib/constants"
 import type {
+  AnswerReview,
   PublicQuestion,
   Quiz,
   QuizAttempt,
@@ -45,6 +46,17 @@ export async function getStudentProgress(profileId: string): Promise<StudentProg
   const { data, error } = await admin.rpc("student_progress", { p_profile_id: profileId })
   if (error) throw error
   return data as unknown as StudentProgress
+}
+
+/** Caller must derive profileId from the verified session, never request input. */
+export async function getAnswerReview(profileId: string, slug: QuizSlug): Promise<AnswerReview> {
+  const { data, error } = await createAdminClient().rpc("quiz_answer_review", {
+    p_profile_id: profileId,
+    p_slug: slug,
+  })
+  if (error) throw error
+  if (!data) throw new Error("Answer review returned no data")
+  return data as unknown as AnswerReview
 }
 
 /** Throws with a Postgres code: P0001 already completed, P0002 session not open. */
