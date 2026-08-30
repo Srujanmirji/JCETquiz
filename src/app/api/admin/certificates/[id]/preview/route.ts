@@ -29,7 +29,8 @@ export async function GET(_req: Request, { params }: { params: Promise<{ id: str
       },
     })
   } catch (err) {
+    const message = (err as Error)?.message ?? String(err)
     console.error("[certificate] preview render failed", err)
-    return fail("server_error", "Could not render the certificate.")
+    return fail("server_error", `Could not render the certificate: ${message}`)
   }
 }

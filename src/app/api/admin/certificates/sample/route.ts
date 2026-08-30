@@ -22,7 +22,10 @@ export async function GET() {
       },
     })
   } catch (err) {
+    // Surface the cause. This route is admin-only, and "could not render"
+    // with no reason left a production failure undiagnosable from the browser.
+    const message = (err as Error)?.message ?? String(err)
     console.error("[certificate] sample render failed", err)
-    return fail("server_error", "Could not render the sample certificate.")
+    return fail("server_error", `Could not render the sample certificate: ${message}`)
   }
 }

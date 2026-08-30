@@ -1,26 +1,15 @@
-import "server-only"
-
-import { existsSync } from "node:fs"
-import path from "node:path"
+import { CLUB_LOGO_DATA_URI } from "@/lib/certificates/logo-data"
 
 /**
- * Absolute path to the club logo for the certificate, or null.
+ * The club logo for the certificate.
  *
- * Drop the club logo at `public/club-logo.png` (or .jpg) and it is used
- * automatically; without it the certificate falls back to the drawn mark, so a
- * missing file never breaks a send.
+ * Returns an inlined data URI rather than a filesystem path. `public/` is
+ * served by the CDN and is not reliably readable from inside a serverless
+ * function, so the previous fs lookup rendered locally and failed on Vercel.
+ *
+ * Returns null when no logo is bundled, and the template falls back to the
+ * drawn mark — a missing logo must never break a certificate send.
  */
 export function clubLogoPath(): string | null {
-  // Prefer the cropped monogram: the full asset repeats the wordmark we
-  // already set in type, which turns to mush at 46px.
-  for (const name of [
-    "club-logo-mark.png",
-    "club-logo.png",
-    "club-logo.jpg",
-    "club-logo.jpeg",
-  ]) {
-    const candidate = path.join(process.cwd(), "public", name)
-    if (existsSync(candidate)) return candidate
-  }
-  return null
+  return CLUB_LOGO_DATA_URI || null
 }
