@@ -29,7 +29,14 @@ export default async function FinalResultPage() {
   if (!profile) redirect("/register")
 
   const progress = await getStudentProgress(profile.id)
-  if (!progress.workshopComplete) redirect("/dashboard")
+
+  // Same rule as the dashboard: a student who has finished all four sees their
+  // result immediately. The all-sessions-closed gate is what lets someone who
+  // MISSED a session still reach a result once the workshop ends.
+  const allDone =
+    progress.quizzes.length > 0 &&
+    progress.quizzes.every((q) => q.state === "completed")
+  if (!allDone && !progress.workshopComplete) redirect("/dashboard")
 
   const final = progress.final
   if (!final) redirect("/dashboard")

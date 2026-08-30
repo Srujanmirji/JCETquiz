@@ -8,6 +8,7 @@ import { StudentShell } from "@/components/marketing/shell"
 import { Panel, Card } from "@/components/ui/surface"
 import { Button } from "@/components/ui/button"
 import { QuizCard } from "@/components/dashboard/quiz-card"
+import { CompletionCard } from "@/components/dashboard/completion-card"
 import { SignOutButton } from "@/components/marketing/sign-out-button"
 import { PASS_SCORE, TOTAL_QUESTIONS } from "@/lib/constants"
 
@@ -21,6 +22,11 @@ export default async function DashboardPage() {
 
   const progress = await getStudentProgress(profile.id)
   const done = progress.quizzes.filter((q) => q.state === "completed").length
+  // A student who has finished all four gets their verdict now. Waiting for the
+  // instructor to close the last session would be pointless for them — that
+  // gate exists so people who MISSED a session still get a result at the end.
+  const allDone = done === progress.quizzes.length
+  const canSeeFinal = allDone || progress.workshopComplete
   const available = progress.quizzes.find((q) => q.state === "available")
   const firstName = profile.name.split(" ")[0]
 
@@ -35,11 +41,13 @@ export default async function DashboardPage() {
             {firstName}
           </h1>
           <p className="text-sm text-ink-muted">
-            {available
-              ? `${available.title} is open now.`
-              : progress.workshopComplete
-                ? "All sessions are finished."
-                : "Waiting for the next session to begin."}
+            {allDone
+              ? "You have finished every quiz."
+              : available
+                ? `${available.title} is open now.`
+                : progress.workshopComplete
+                  ? "All sessions are finished."
+                  : "Waiting for the next session to begin."}
           </p>
         </header>
 
@@ -96,33 +104,13 @@ export default async function DashboardPage() {
         </section>
 
         {/* ---- final result ---- */}
-        {progress.workshopComplete ? (
-          <Card className="border-accent/40 p-5">
-            <div className="flex flex-wrap items-center justify-between gap-4">
-              <div className="flex items-start gap-3.5">
-                <span className="grid size-9 shrink-0 place-items-center rounded-[var(--radius-input)] border border-accent/35 bg-accent/12">
-                  <Award className="size-4 text-accent" aria-hidden />
-                </span>
-                <div>
-                  <p className="text-sm font-semibold text-ink">Your final result is ready</p>
-                  <p className="mt-0.5 text-xs text-ink-muted">
-                    All four sessions have finished.
-                  </p>
-                </div>
-              </div>
-              <Button asChild>
-                <Link href="/result">
-                  View final result
-                  <ArrowRight className="size-4" aria-hidden />
-                </Link>
-              </Button>
-            </div>
-          </Card>
+        {canSeeFinal && progress.final ? (
+          <CompletionCard final={progress.final} email={profile.email} />
         ) : (
           <Card className="p-5">
             <p className="text-sm font-medium text-ink">Final result</p>
             <p className="mt-1 max-w-[56ch] text-xs leading-relaxed text-ink-muted">
-              Unlocks once every session has finished. You need{" "}
+              Unlocks once you have finished all four quizzes. You need{" "}
               <span className="text-ink">{PASS_SCORE} of {TOTAL_QUESTIONS}</span> overall for a
               certificate.
             </p>
