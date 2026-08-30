@@ -32,15 +32,10 @@ export function quizMeta(slug: QuizSlug) {
 
 export const BRANCHES = [
   "Computer Science",
-  "Information Science",
-  "Electronics & Communication",
-  "Electrical & Electronics",
-  "Mechanical",
-  "Civil",
   "Artificial Intelligence & Machine Learning",
-  "Data Science",
-  "Biotechnology",
-  "Other",
+  "Electronics & Communication",
+  "Civil",
+  "Mechanical",
 ] as const
 
 export const YEARS = ["1st Year", "2nd Year", "3rd Year", "4th Year"] as const

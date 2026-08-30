@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/surface"
 import { HeroVisual } from "@/components/marketing/hero-visual"
 import { createClient } from "@/lib/supabase/server"
-import { TOTAL_QUESTIONS, PASS_PERCENTAGE } from "@/lib/constants"
+import { TOTAL_QUESTIONS, PASS_PERCENTAGE, QUIZZES } from "@/lib/constants"
 
 const HIGHLIGHTS = [
   `${TOTAL_QUESTIONS} Beginner Friendly Questions`,
@@ -17,7 +17,8 @@ const HIGHLIGHTS = [
 // A word in this slot ("Certificate") overflowed the card at every width.
 const METRICS = [
   { value: `${TOTAL_QUESTIONS}`, label: "Questions" },
-  { value: "3", label: "Topics" },
+  // Derived, not typed: this said "3" after Python was added.
+  { value: `${QUIZZES.length}`, label: "Topics" },
   { value: `${PASS_PERCENTAGE}%`, label: "To Qualify" },
   { value: "1", label: "Attempt Only" },
 ] as const
@@ -54,7 +55,7 @@ export default async function LandingPage() {
 
           <nav aria-label="Primary navigation" className="hidden items-center gap-7 md:flex">
             <Link className="inline-flex min-h-11 items-center text-sm font-medium text-accent-soft hover:text-ink" href="#home">Home</Link>
-            <Link className="inline-flex min-h-11 items-center text-sm text-ink-muted hover:text-ink" href="#about">About</Link>
+            <Link className="inline-flex min-h-11 items-center text-sm text-ink-muted hover:text-ink" href="/about">About</Link>
             <Link className="inline-flex min-h-11 items-center text-sm text-ink-muted hover:text-ink" href="#quiz">Quiz</Link>
             <Link className="inline-flex min-h-11 items-center text-sm text-ink-muted hover:text-ink" href="#contact">Contact</Link>
           </nav>
@@ -110,7 +111,7 @@ export default async function LandingPage() {
                   </Link>
                 </Button>
                 <Button asChild variant="ghost" size="lg" className="text-ink-muted hover:text-ink">
-                  <Link href="#about">
+                  <Link href="/about">
                     &gt; Learn More
                   </Link>
                 </Button>

@@ -9,6 +9,7 @@ import {
   QUESTIONS_PER_QUIZ,
   QUIZZES,
   QUIZ_SLUGS,
+  BRANCHES,
   isQuizSlug,
 } from "@/lib/constants.ts"
 import { profileSchema, submitSchema, sessionActionSchema } from "@/lib/validation.ts"
@@ -121,6 +122,25 @@ test("no seeded question has an out-of-range answer key", () => {
 })
 
 // ------------------------------------------------------------------ input
+test("registration offers and accepts only the five workshop branches", () => {
+  const branches = [
+    "Computer Science",
+    "Artificial Intelligence & Machine Learning",
+    "Electronics & Communication",
+    "Civil",
+    "Mechanical",
+  ]
+  assert.deepEqual([...BRANCHES], branches)
+
+  const profile = { name: "Ananya Sharma", phone: "9876543210", year: "1st Year" }
+  for (const branch of branches) {
+    assert.equal(profileSchema.safeParse({ ...profile, branch }).success, true, branch)
+  }
+  for (const branch of ["Information Science", "Electrical & Electronics", "Data Science", "Biotechnology", "Other", ""]) {
+    assert.equal(profileSchema.safeParse({ ...profile, branch }).success, false, branch)
+  }
+})
+
 test("profile input rejects what the database would reject", () => {
   const good = { name: "Ananya Sharma", phone: "9876543210", branch: "Computer Science", year: "1st Year" }
   assert.equal(profileSchema.safeParse(good).success, true)

@@ -34,7 +34,7 @@ Fields:
 - Name, prefilled from Google and editable.
 - Email, taken from Google and read-only.
 - Mobile number, required.
-- Branch, required.
+- Branch, required: Computer Science, Artificial Intelligence & Machine Learning, Electronics & Communication, Civil, or Mechanical.
 - Year, defaulted to 1st Year and optionally locked by event rules.
 
 ## 4. Quiz requirements

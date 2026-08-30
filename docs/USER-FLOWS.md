@@ -1,5 +1,13 @@
 # User Flows
 
+## About the workshop
+
+1. Open `About` in the homepage navigation or select `Learn More`.
+2. Visit the public `/about` page; no sign-in is required.
+3. Read about HTML, CSS, JavaScript and Python: four topic quizzes of ten questions each.
+4. Review Google sign-in, instructor-opened sessions, one attempt per topic and the overall certificate threshold of 28/40 (70%).
+5. Choose `Get Started` to sign in, or `Back to home` to return.
+
 ## Student first visit
 
 1. Open workshop website.
