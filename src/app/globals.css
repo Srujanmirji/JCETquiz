@@ -1,0 +1,491 @@
+@import "tailwindcss";
+
+/* ==========================================================================
+   Midnight Blue (#1E223D) & Exotic Orange (#F54F1B) Theme
+   ========================================================================== */
+@theme {
+  /* Base — deep midnight navy, never pure #000, so surfaces have room to lift */
+  /* Named `canvas`, not `base`: a `--color-base` token makes Tailwind emit a
+     colour utility `text-base` that collides with the built-in font-size
+     utility of the same name. */
+  --color-canvas:        #080a14;
+  --color-canvas-soft:   #0d1020;
+  --color-midnight:      #1E223D;
+  --color-elevated:      #12162b;
+  --color-elevated-high: #1a203d;
+
+  /* Glass fills. Three steps of real separation. */
+  --color-glass:        rgba(30, 34, 61, 0.45);
+  --color-glass-strong: rgba(30, 34, 61, 0.70);
+  --color-glass-hover:  rgba(42, 48, 82, 0.75);
+
+  /* Hairlines & borders */
+  --color-line:        rgba(255, 255, 255, 0.08);
+  --color-line-strong: rgba(255, 255, 255, 0.16);
+
+  /* Text — high contrast against midnight ground */
+  --color-ink:       #f8fafc;
+  --color-ink-muted: #94a3b8;
+  --color-ink-faint: #8794ab;  /* 4.15:1 at #64748b — raised to clear AA */
+
+  /* Primary Accent: Exotic Orange (#F54F1B) */
+  --color-accent:      #F54F1B;
+  --color-accent-soft: #FF6738;
+  --color-accent-deep: #D43C0C;
+  --color-on-accent:   #1a0a02;  /* 5.53:1 on #F54F1B; #fff was 3.49:1 */
+
+  /* Secondary Accents */
+  --color-violet:      #8B5CF6;
+  --color-violet-soft: #A78BFA;
+  --color-cyan:        #38BDF8;
+  --color-html:        #F54F1B;
+  --color-css:         #38BDF8;
+  --color-js:          #F59E0B;
+
+  /* Status Colors */
+  --color-ok:      #10B981;
+  --color-ok-deep: #059669;
+  --color-warn:    #F59E0B;
+  --color-bad:     #EF4444;
+
+  /* Radius by surface role */
+  --radius-panel: 24px;
+  --radius-card:  16px;
+  --radius-input: 12px;
+  --radius-chip:  8px;
+
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, "SF Mono", monospace;
+
+  --text-2xs:  0.6875rem;
+  --text-xs:   0.75rem;
+  --text-sm:   0.875rem;
+  --text-base: 1rem;
+  --text-lg:   1.125rem;
+  --text-xl:   1.25rem;
+  --text-2xl:  1.5rem;
+  --text-3xl:  2rem;
+  --text-4xl:  2.75rem;
+  --text-5xl:  4rem;
+  --text-6xl:  5.5rem;
+
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+
+  --shadow-button: 0 1px 0 0 rgba(255, 255, 255, 0.22) inset, 0 8px 24px -6px rgba(245, 79, 27, 0.55);
+  --shadow-hero-stage: 0 0 80px rgba(245, 79, 27, 0.35);
+  --shadow-state-accent: 0 0 36px -8px rgba(245, 79, 27, 0.45);
+  --shadow-state-ok: 0 0 30px -12px rgba(16, 185, 129, 0.4);
+  --drop-shadow-code: 0 0 24px rgba(245, 79, 27, 0.4);
+}
+
+@layer base {
+  * { border-color: var(--color-line); }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+    scrollbar-gutter: stable;
+  }
+
+  body {
+    background-color: var(--color-canvas);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-feature-settings: "cv11", "ss01";
+    -webkit-font-smoothing: antialiased;
+    min-height: 100dvh;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+    border-radius: 6px;
+  }
+
+  .tnum { font-variant-numeric: tabular-nums; }
+
+  ::selection { background: rgba(245, 79, 27, 0.35); }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer components {
+  /* ======================================================================
+     ATMOSPHERE — Midnight Blue (#1E223D) ambient backdrop with Exotic Orange highlights
+     ====================================================================== */
+  .ambient {
+    position: fixed;
+    inset: 0;
+    z-index: -2;
+    pointer-events: none;
+    overflow: hidden;
+    background:
+      radial-gradient(56rem 40rem at 12% -8%, rgba(30, 34, 61, 0.95), transparent 60%),
+      radial-gradient(48rem 36rem at 88% 2%, rgba(245, 79, 27, 0.18), transparent 56%),
+      radial-gradient(52rem 36rem at 78% 46%, rgba(30, 34, 61, 0.85), transparent 62%),
+      radial-gradient(46rem 34rem at 10% 64%, rgba(30, 34, 61, 0.80), transparent 62%),
+      radial-gradient(56rem 36rem at 52% 102%, rgba(245, 79, 27, 0.16), transparent 64%),
+      var(--color-canvas);
+  }
+
+  /* Engineering grid */
+  .ambient::before {
+    content: "";
+    position: absolute;
+    inset: -2px;
+    background-image:
+      linear-gradient(rgba(255, 255, 255, 0.024) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.024) 1px, transparent 1px);
+    background-size: 64px 64px;
+    mask-image: radial-gradient(150% 120% at 50% 0%, #000 20%, transparent 92%);
+    -webkit-mask-image: radial-gradient(150% 120% at 50% 0%, #000 20%, transparent 92%);
+  }
+
+  /* Grain overlay */
+  .ambient::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    opacity: 0.55;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
+  }
+
+  /* Dark vignette floor */
+  .ambient-veil {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background:
+      radial-gradient(150% 110% at 50% 6%, transparent 0%, rgba(8, 10, 20, 0.35) 62%, rgba(8, 10, 20, 0.65) 100%),
+      linear-gradient(180deg, rgba(8, 10, 20, 0.4) 0%, transparent 22%);
+  }
+
+  /* ======================================================================
+     GLASS — cards and elevated surfaces
+     ====================================================================== */
+  .glass {
+    position: relative;
+    background: linear-gradient(
+      160deg,
+      rgba(30, 34, 61, 0.55) 0%,
+      rgba(18, 22, 43, 0.50) 46%,
+      rgba(30, 34, 61, 0.45) 100%
+    );
+    border: 1px solid var(--color-line);
+    backdrop-filter: blur(22px) saturate(165%);
+    -webkit-backdrop-filter: blur(22px) saturate(165%);
+    box-shadow:
+      inset 0 1px 0 0 rgba(255, 255, 255, 0.10),
+      0 12px 32px -14px rgba(0, 0, 0, 0.75);
+  }
+
+  .glass-strong {
+    position: relative;
+    background: linear-gradient(
+      160deg,
+      rgba(30, 34, 61, 0.75) 0%,
+      rgba(18, 22, 43, 0.70) 44%,
+      rgba(26, 32, 61, 0.65) 100%
+    );
+    border: 1px solid var(--color-line-strong);
+    backdrop-filter: blur(32px) saturate(180%);
+    -webkit-backdrop-filter: blur(32px) saturate(180%);
+    box-shadow:
+      inset 0 1px 0 0 rgba(255, 255, 255, 0.16),
+      inset 0 -1px 0 0 rgba(0, 0, 0, 0.4),
+      0 28px 70px -26px rgba(0, 0, 0, 0.9);
+  }
+
+  @supports not (backdrop-filter: blur(1px)) {
+    .glass          { background: var(--color-elevated); }
+    .glass-strong   { background: var(--color-elevated-high); }
+  }
+
+  /* Specular highlight along top edge */
+  .lit::before {
+    content: "";
+    position: absolute;
+    inset-inline: 14%;
+    top: -1px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.45), transparent);
+    pointer-events: none;
+  }
+
+  /* Accent bloom behind hero surfaces */
+  .bloom { position: relative; isolation: isolate; }
+  .bloom::after {
+    content: "";
+    position: absolute;
+    inset: -40% -18% auto -18%;
+    height: 70%;
+    z-index: -1;
+    background: radial-gradient(60% 100% at 50% 0%, rgba(245, 79, 27, 0.25), transparent 70%);
+    filter: blur(48px);
+    pointer-events: none;
+  }
+
+  .hero-beam {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background:
+      linear-gradient(152deg, transparent 48%, rgba(245, 79, 27, 0.12) 49%, transparent 51%),
+      radial-gradient(38rem 24rem at 78% 52%, rgba(30, 34, 61, 0.4), transparent 68%);
+  }
+
+  /* =========================================================================
+     Hero Section Premium 60fps Animations
+     ========================================================================= */
+
+  .hero-animated-window {
+    animation: hero-float-tilt 6.5s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
+    will-change: transform;
+    transform-origin: center center;
+  }
+
+  .hero-animated-sweep {
+    animation: hero-sweep 6.5s ease-in-out infinite;
+    will-change: transform, opacity;
+  }
+
+  .hero-animated-rings-spin {
+    animation: hero-spin 22s linear infinite;
+    will-change: transform;
+    transform-origin: 50% 55%;
+  }
+
+  .hero-animated-ring-pulse {
+    animation: hero-ring-glow 4.8s ease-in-out infinite;
+    will-change: opacity, transform;
+  }
+
+  .hero-animated-badge-html {
+    animation: hero-badge-html-orbit 5.5s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
+    will-change: transform;
+  }
+
+  .hero-animated-badge-css {
+    animation: hero-badge-css-orbit 6.5s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
+    will-change: transform;
+  }
+
+  .hero-animated-badge-js {
+    animation: hero-badge-js-orbit 5.0s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
+    will-change: transform;
+  }
+
+  .hero-animated-glow {
+    animation: hero-breathe-glow 6.5s ease-in-out infinite;
+    will-change: opacity, transform;
+  }
+
+  .hero-animated-glow-blue {
+    animation: hero-breathe-glow-blue 7.5s ease-in-out infinite;
+    will-change: opacity, transform;
+  }
+
+  .hero-animated-particle-1 {
+    animation: hero-particle-drift 5.8s ease-in-out infinite;
+    will-change: transform, opacity;
+  }
+
+  .hero-animated-particle-2 {
+    animation: hero-particle-drift-reverse 6.6s ease-in-out infinite;
+    will-change: transform, opacity;
+  }
+
+  .hero-orbit-line-orange {
+    animation: hero-orbit-dash 24s linear infinite;
+  }
+
+  .hero-orbit-line-blue {
+    animation: hero-orbit-dash-rev 28s linear infinite;
+  }
+}
+
+/* =========================================================================
+   Hero Keyframe Definitions
+   ========================================================================= */
+
+@keyframes hero-float-tilt {
+  0%, 100% {
+    transform: translate3d(0, 0px, 0) rotateX(3deg) rotateY(-8deg) rotateZ(-2deg);
+  }
+  50% {
+    transform: translate3d(0, -8.5px, 0) rotateX(2deg) rotateY(-7deg) rotateZ(-1.5deg);
+  }
+}
+
+@keyframes hero-orbit-dash {
+  0% {
+    stroke-dashoffset: 0;
+  }
+  100% {
+    stroke-dashoffset: 800;
+  }
+}
+
+@keyframes hero-orbit-dash-rev {
+  0% {
+    stroke-dashoffset: 0;
+  }
+  100% {
+    stroke-dashoffset: -800;
+  }
+}
+
+@keyframes hero-sweep {
+  0%, 35% {
+    transform: translate3d(-150%, -150%, 0) rotate(-15deg);
+    opacity: 0;
+  }
+  42% {
+    opacity: 0.85;
+  }
+  52% {
+    transform: translate3d(150%, 150%, 0) rotate(-15deg);
+    opacity: 0;
+  }
+  100% {
+    transform: translate3d(150%, 150%, 0) rotate(-15deg);
+    opacity: 0;
+  }
+}
+
+@keyframes hero-spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes hero-ring-glow {
+  0%, 100% {
+    opacity: 0.7;
+    transform: scale(0.97);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.04);
+  }
+}
+
+@keyframes hero-badge-html-orbit {
+  0%, 100% {
+    transform: translate3d(0, 0, 0) rotate(0deg);
+  }
+  30% {
+    transform: translate3d(3px, -7px, 0) rotate(1.8deg);
+  }
+  70% {
+    transform: translate3d(-4px, 4px, 0) rotate(-1.2deg);
+  }
+}
+
+@keyframes hero-badge-css-orbit {
+  0%, 100% {
+    transform: translate3d(0, 0, 0) rotate(0deg);
+  }
+  35% {
+    transform: translate3d(-5px, 6px, 0) rotate(-2deg);
+  }
+  75% {
+    transform: translate3d(4px, -6px, 0) rotate(1.5deg);
+  }
+}
+
+@keyframes hero-badge-js-orbit {
+  0%, 100% {
+    transform: translate3d(0, 0, 0) rotate(0deg);
+  }
+  28% {
+    transform: translate3d(-5px, -5px, 0) rotate(-1.5deg);
+  }
+  68% {
+    transform: translate3d(5px, 4px, 0) rotate(1.2deg);
+  }
+}
+
+@keyframes hero-breathe-glow {
+  0%, 100% {
+    opacity: 0.55;
+    transform: scale(0.96);
+  }
+  50% {
+    opacity: 0.85;
+    transform: scale(1.05);
+  }
+}
+
+@keyframes hero-breathe-glow-blue {
+  0%, 100% {
+    opacity: 0.45;
+    transform: scale(1.03);
+  }
+  50% {
+    opacity: 0.75;
+    transform: scale(0.96);
+  }
+}
+
+@keyframes hero-particle-drift {
+  0%, 100% {
+    transform: translate3d(0, 0, 0);
+    opacity: 0.35;
+  }
+  50% {
+    transform: translate3d(5px, -10px, 0);
+    opacity: 0.95;
+  }
+}
+
+@keyframes hero-particle-drift-reverse {
+  0%, 100% {
+    transform: translate3d(0, 0, 0);
+    opacity: 0.25;
+  }
+  50% {
+    transform: translate3d(-7px, -12px, 0);
+    opacity: 0.9;
+  }
+}
+
+@keyframes hero-particle-pulse {
+  0%, 100% {
+    transform: translate3d(0, 0, 0) scale(0.85);
+    opacity: 0.3;
+  }
+  50% {
+    transform: translate3d(6px, -8px, 0) scale(1.25);
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-animated-window,
+  .hero-animated-sweep,
+  .hero-animated-rings-spin,
+  .hero-animated-ring-pulse,
+  .hero-animated-badge-html,
+  .hero-animated-badge-css,
+  .hero-animated-badge-js,
+  .hero-animated-glow,
+  .hero-animated-glow-blue,
+  .hero-animated-particle-1,
+  .hero-animated-particle-2,
+  .hero-animated-particle-3 {
+    animation: none !important;
+    transform: none !important;
+  }
+}
