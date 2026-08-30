@@ -64,7 +64,7 @@ export function RegistrationForm({
         return
       }
 
-      startTransition(() => router.push("/quiz"))
+      startTransition(() => router.push("/dashboard"))
     } catch {
       setFormError("We could not reach the server. Check your connection and try again.")
       setSubmitting(false)
@@ -161,7 +161,7 @@ export function RegistrationForm({
 
       <div className="pt-2">
         <Button type="submit" size="lg" block loading={busy}>
-          {isUpdate ? "Save and Continue" : "Continue to Quiz"}
+          {isUpdate ? "Save and Continue" : "Continue to My Dashboard"}
           {!busy && <ArrowRight className="size-4" aria-hidden />}
         </Button>
       </div>
