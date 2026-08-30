@@ -99,9 +99,11 @@ export interface Certificate {
 
 export interface WorkshopSettings {
   id: boolean
+  club_name: string
   college_name: string
   workshop_name: string
   event_date: string
+  event_end_date: string | null
   organizer_name: string
   organizer_title: string
   certificate_prefix: string

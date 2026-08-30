@@ -1,6 +1,5 @@
 import "server-only"
 
-import { Resend } from "resend"
 import { serverEnv } from "@/lib/env"
 
 export interface CertificateEmailInput {
@@ -17,35 +16,95 @@ export interface CertificateEmailInput {
 }
 
 /**
- * Sends the certificate. The PDF is attached AND a signed link is included:
- * the attachment is what a student keeps, the link is the fallback when a
- * college mail filter strips attachments (docs/CERTIFICATES.md).
+ * Sends the certificate through a Google Apps Script web app running on the
+ * organisers' own Gmail account.
+ *
+ * Chosen over a transactional provider because it needs no domain
+ * verification — the mail comes from a real Gmail address the students
+ * already recognise. The cost is a hard daily quota:
+ *
+ *   consumer @gmail.com : 100 recipients/day
+ *   Google Workspace    : 1,500 recipients/day
+ *
+ * `getRemainingQuota()` surfaces that in the admin UI so nobody discovers the
+ * ceiling halfway through a send.
  */
 export async function sendCertificateEmail(input: CertificateEmailInput) {
-  const { resendApiKey, emailFrom } = serverEnv()
+  const { appsScriptUrl, appsScriptSecret, emailFromName, replyTo } = serverEnv()
 
-  if (!resendApiKey) {
-    throw new Error("RESEND_API_KEY is not configured — see docs/SETUP.md step 3.")
+  if (!appsScriptUrl || !appsScriptSecret) {
+    throw new Error(
+      "APPS_SCRIPT_URL and APPS_SCRIPT_SECRET are not configured — see docs/SETUP.md.",
+    )
   }
 
-  const resend = new Resend(resendApiKey)
-
-  const { data, error } = await resend.emails.send({
-    from: emailFrom,
-    to: input.to,
-    subject: `Your ${input.workshopName} Certificate`,
-    html: certificateEmailHtml(input),
-    text: certificateEmailText(input),
-    attachments: [
-      {
+  let res: Response
+  try {
+    res = await fetch(appsScriptUrl, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      // Apps Script answers the /exec URL with a 302 to googleusercontent;
+      // fetch follows it by default, which is what we want.
+      redirect: "follow",
+      body: JSON.stringify({
+        secret: appsScriptSecret,
+        to: input.to,
+        subject: `Your ${input.workshopName} Certificate`,
+        fromName: emailFromName,
+        replyTo: replyTo || undefined,
+        text: certificateEmailText(input),
+        html: certificateEmailHtml(input),
         filename: `${input.certificateNumber}.pdf`,
-        content: input.pdf.toString("base64"),
-      },
-    ],
-  })
+        pdfBase64: input.pdf.toString("base64"),
+      }),
+      signal: AbortSignal.timeout(60_000),
+    })
+  } catch (err) {
+    throw new Error(
+      `Could not reach the Apps Script mailer: ${(err as Error).message}`,
+    )
+  }
 
-  if (error) throw new Error(error.message ?? "Resend rejected the message")
-  return data
+  // Apps Script returns 200 with an HTML error page when the deployment is
+  // misconfigured, so the status alone is not enough to trust.
+  const raw = await res.text()
+  let payload: { ok?: boolean; error?: string; remainingQuota?: number }
+  try {
+    payload = JSON.parse(raw)
+  } catch {
+    throw new Error(
+      "The Apps Script URL did not return JSON. Check the deployment is a Web App " +
+        'with "Who has access: Anyone", and that you copied the /exec URL.',
+    )
+  }
+
+  if (!payload.ok) {
+    throw new Error(
+      payload.error === "unauthorized"
+        ? "Apps Script rejected the shared secret. APPS_SCRIPT_SECRET must match SHARED_SECRET in Code.gs."
+        : (payload.error ?? "Apps Script reported an unknown failure."),
+    )
+  }
+
+  return { remainingQuota: payload.remainingQuota ?? null }
+}
+
+/** Today's remaining send quota, or null when the mailer is unreachable. */
+export async function getRemainingQuota(): Promise<number | null> {
+  const { appsScriptUrl } = serverEnv()
+  if (!appsScriptUrl) return null
+
+  try {
+    const res = await fetch(appsScriptUrl, {
+      method: "GET",
+      redirect: "follow",
+      signal: AbortSignal.timeout(10_000),
+    })
+    const payload = (await res.json()) as { remainingQuota?: number }
+    return typeof payload.remainingQuota === "number" ? payload.remainingQuota : null
+  } catch {
+    return null
+  }
 }
 
 function certificateEmailText(i: CertificateEmailInput) {
@@ -82,7 +141,7 @@ function certificateEmailHtml(i: CertificateEmailInput) {
     <tr><td style="padding:16px 32px 0;">
       <p style="margin:0;font-size:15px;line-height:1.65;color:#334155;">
         Hi ${escapeHtml(i.studentName)},<br><br>
-        Congratulations on completing the <strong>${escapeHtml(i.workshopName)}</strong>. Your certificate is attached to this email as a PDF.
+        Congratulations on completing the <strong>${escapeHtml(i.workshopName)}</strong>, covering HTML, CSS, JavaScript and Python. Your certificate is attached to this email as a PDF.
       </p>
     </td></tr>
 
@@ -104,7 +163,7 @@ function certificateEmailHtml(i: CertificateEmailInput) {
     ${
       i.downloadUrl
         ? `<tr><td style="padding:24px 32px 0;" align="center">
-             <a href="${i.downloadUrl}" style="display:inline-block;background:#2c5fd0;color:#ffffff;text-decoration:none;font-size:15px;font-weight:600;padding:13px 28px;border-radius:8px;">Download your certificate</a>
+             <a href="${i.downloadUrl}" style="display:inline-block;background:#F54F1B;color:#ffffff;text-decoration:none;font-size:15px;font-weight:600;padding:13px 28px;border-radius:8px;">Download your certificate</a>
              <p style="margin:10px 0 0;font-size:12px;color:#6b7684;">This link works for 7 days.</p>
            </td></tr>`
         : ""

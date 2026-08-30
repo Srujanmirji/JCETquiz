@@ -3,14 +3,18 @@ import "server-only"
 import { renderToBuffer } from "@react-pdf/renderer"
 import { createAdminClient } from "@/lib/supabase/admin"
 import { CertificateDocument } from "@/lib/certificates/template"
+import { formatEventDate } from "@/lib/certificates/event-date"
+import { clubLogoPath } from "@/lib/certificates/logo"
 import { TOTAL_QUESTIONS } from "@/lib/constants"
 import type { WorkshopSettings } from "@/types/database"
 
 const FALLBACK: WorkshopSettings = {
   id: true,
-  college_name: "Your College Name",
+  club_name: "Developer's Club",
+  college_name: "Jain College of Engineering and Technology, Hubli",
   workshop_name: "Web Development Workshop",
   event_date: new Date().toISOString().slice(0, 10),
+  event_end_date: null,
   organizer_name: "Workshop Organizer",
   organizer_title: "Faculty Coordinator",
   certificate_prefix: "WDW",
@@ -41,11 +45,9 @@ export async function renderSampleCertificate(): Promise<Buffer> {
       javascriptScore: 7,
       pythonScore: 8,
       certificateNumber: `${settings.certificate_prefix}-${new Date().getFullYear()}-00042`,
-      eventDate: new Date(settings.event_date).toLocaleDateString("en-IN", {
-        day: "numeric",
-        month: "long",
-        year: "numeric",
-      }),
+      eventDate: formatEventDate(settings.event_date, settings.event_end_date),
+      logoPath: clubLogoPath(),
+    clubName: settings.club_name,
       collegeName: settings.college_name,
       workshopName: settings.workshop_name,
       organizerName: settings.organizer_name,

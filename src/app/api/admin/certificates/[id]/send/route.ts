@@ -7,7 +7,7 @@ import {
   signedCertificateUrl,
   toCertificateData,
 } from "@/lib/certificates/generate"
-import { sendCertificateEmail } from "@/lib/email/resend"
+import { sendCertificateEmail } from "@/lib/email/apps-script"
 import { TOTAL_QUESTIONS } from "@/lib/constants"
 
 /**
@@ -113,7 +113,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
       })
     }
 
-    // Surface the provider's own wording — an unverified Resend domain is the
+    // Surface the provider's own wording — a misconfigured Apps Script
     // single most common cause here and the message says exactly that.
     return fail("server_error", `Could not send the email: ${message}`)
   }

@@ -15,7 +15,7 @@ changing behaviour. The application is built; `docs/` still governs what it must
 ## Stack
 
 Next.js 15 (App Router) · React 19 · TypeScript (strict) · Tailwind v4 · Radix primitives ·
-Supabase (Auth + Postgres + Storage) · Resend · `@react-pdf/renderer` for certificates.
+Supabase (Auth + Postgres + Storage) · Google Apps Script for email · `@react-pdf/renderer` for certificates.
 
 **Where the rules actually live** — change them here, not in a component:
 

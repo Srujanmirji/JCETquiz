@@ -47,9 +47,11 @@ export const resetAttemptSchema = z.object({
 })
 
 export const settingsSchema = z.object({
-  college_name: z.string().trim().min(2).max(120),
+  club_name: z.string().trim().min(2).max(120),
+  college_name: z.string().trim().min(2).max(160),
   workshop_name: z.string().trim().min(2).max(120),
   event_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Use YYYY-MM-DD"),
+  event_end_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Use YYYY-MM-DD").or(z.literal("")).nullable().optional(),
   organizer_name: z.string().trim().min(2).max(120),
   organizer_title: z.string().trim().min(2).max(120),
   certificate_prefix: z.string().trim().regex(/^[A-Z0-9]{2,8}$/, "2-8 uppercase letters or digits"),

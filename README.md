@@ -20,7 +20,7 @@ Modern glassmorphism + dark tech design.
 - Authentication: Supabase Auth with Google provider
 - Database: Supabase PostgreSQL
 - Storage: Supabase Storage for generated certificates
-- Email: Resend
+- Email: Google Apps Script (organisers' Gmail)
 - PDF certificate generation: server-side HTML/PDF generation
 
 ## Core rules
@@ -101,3 +101,35 @@ The browser never sends a score. It sends `{questionId, selectedOption}` pairs, 
 database grades them against its own answer key.
 
 # JCETquiz
+
+## Certificate email (Google Apps Script)
+
+Certificates are sent from the organisers' own Gmail through an Apps Script web
+app — no sending domain to verify, and students recognise the address.
+
+1. **script.google.com** → New project → paste [`scripts/apps-script/Code.gs`](scripts/apps-script/Code.gs)
+2. Replace `SHARED_SECRET` with a long random string
+3. **Deploy → New deployment → Web app**
+   - Execute as: **Me**
+   - Who has access: **Anyone**
+4. Authorise (it warns "unverified" — it's your own script; continue via Advanced)
+5. Put the `/exec` URL and the same secret in `.env.local`:
+
+   ```
+   APPS_SCRIPT_URL=https://script.google.com/macros/s/…/exec
+   APPS_SCRIPT_SECRET=the-same-long-random-string
+   ```
+
+Open the `/exec` URL in a browser to check it works — it returns today's
+remaining quota.
+
+### The quota matters
+
+| Account type | Recipients per day |
+|---|---|
+| Consumer `@gmail.com` | **100** |
+| Google Workspace | **1,500** |
+
+The admin Certificates page shows what's left today and warns when you have
+more certificates pending than quota remaining. If the workshop is larger than
+100 students, run the script from a Workspace account.

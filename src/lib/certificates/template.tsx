@@ -1,4 +1,4 @@
-import { Document, Page, Text, View, StyleSheet, Svg, Path, Rect } from "@react-pdf/renderer"
+import { Document, Page, Text, View, StyleSheet, Svg, Path, Rect, Image } from "@react-pdf/renderer"
 
 /**
  * The certificate.
@@ -17,7 +17,7 @@ const ACCENT = "#F54F1B"
 
 const styles = StyleSheet.create({
   page: {
-    paddingTop: 46,
+    paddingTop: 40,
     paddingBottom: 40,
     paddingHorizontal: 54,
     backgroundColor: "#ffffff",
@@ -48,12 +48,24 @@ const styles = StyleSheet.create({
   // score optically centred on the sheet at any content length.
   body_band: { flexGrow: 1, justifyContent: "center", alignItems: "center" },
   header: { alignItems: "center", marginBottom: 4 },
+  logo: {
+    width: 62,
+    height: 51,
+    objectFit: "contain",
+    borderRadius: 6,
+  },
   institution: {
     fontSize: 11,
     letterSpacing: 2.6,
     color: MUTED,
     fontFamily: "Helvetica-Bold",
     textTransform: "uppercase",
+  },
+  college: {
+    fontSize: 9.5,
+    color: MUTED,
+    marginTop: 4,
+    letterSpacing: 0.3,
   },
   title: {
     fontSize: 30,
@@ -118,6 +130,9 @@ export interface CertificateData {
   pythonScore: number
   certificateNumber: string
   eventDate: string
+  /** Absolute path to the club logo. Falls back to the drawn mark when absent. */
+  logoPath?: string | null
+  clubName: string
   collegeName: string
   workshopName: string
   organizerName: string
@@ -173,20 +188,25 @@ export function CertificateDocument(data: CertificateData) {
         <View style={styles.frameInner} fixed />
 
         <View style={styles.header}>
-          <LogoMark />
-          <Text style={[styles.institution, { marginTop: 8 }]}>{data.collegeName}</Text>
-          <Text style={styles.title}>Certificate of Achievement</Text>
+          {data.logoPath ? (
+            <Image src={data.logoPath} style={styles.logo} />
+          ) : (
+            <LogoMark />
+          )}
+          <Text style={[styles.institution, { marginTop: 8 }]}>{data.clubName}</Text>
+          <Text style={styles.college}>{data.collegeName}</Text>
+          <Text style={styles.title}>Certificate of Completion</Text>
           <View style={styles.rule} />
         </View>
 
         <View style={styles.body_band}>
-          <Text style={styles.presented}>This is to certify that</Text>
+          <Text style={styles.presented}>This certificate is awarded to</Text>
           <Text style={styles.name}>{data.studentName}</Text>
           <View style={styles.nameRule} />
 
           <Text style={styles.body}>
-            successfully completed the {data.workshopName}, covering HTML, CSS and JavaScript, and
-            demonstrated the required standard in the concluding assessment.
+            for the successful completion of the {data.workshopName} held on{" "}
+            {data.eventDate}, covering HTML, CSS, JavaScript and Python.
           </Text>
 
           <View style={styles.scoreRow}>
@@ -223,7 +243,7 @@ export function CertificateDocument(data: CertificateData) {
           </View>
 
           <View style={[styles.footerCol, { alignItems: "flex-end" }]}>
-            <Text style={styles.metaLabel}>Date of issue</Text>
+            <Text style={styles.metaLabel}>Workshop date</Text>
             <Text style={styles.metaValue}>{data.eventDate}</Text>
             <Text style={[styles.metaLabel, { marginTop: 8 }]}>Certificate ID</Text>
             <Text style={styles.certId}>{data.certificateNumber}</Text>

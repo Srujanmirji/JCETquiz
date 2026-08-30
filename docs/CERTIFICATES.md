@@ -36,7 +36,7 @@ Organizer name/signature and college or club logo can be placed at the bottom.
 5. Admin generates PDF.
 6. PDF is stored in Supabase Storage.
 7. Admin clicks Send Certificate.
-8. Email provider sends the PDF or a secure certificate link.
+8. Google Apps Script sends the PDF from the organisers' Gmail, plus a signed link.
 9. System records status and timestamp.
 
 ## Email

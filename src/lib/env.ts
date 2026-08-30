@@ -26,7 +26,12 @@ export const publicEnv = {
 export function serverEnv() {
   return {
     serviceRoleKey: required("SUPABASE_SERVICE_ROLE_KEY", process.env.SUPABASE_SERVICE_ROLE_KEY),
-    resendApiKey: process.env.RESEND_API_KEY ?? "",
-    emailFrom: process.env.EMAIL_FROM ?? "Workshop <onboarding@resend.dev>",
+
+    // Certificates are sent through a Google Apps Script web app on the
+    // organisers' own Gmail, so no sending domain has to be verified.
+    appsScriptUrl: process.env.APPS_SCRIPT_URL ?? "",
+    appsScriptSecret: process.env.APPS_SCRIPT_SECRET ?? "",
+    emailFromName: process.env.EMAIL_FROM_NAME ?? "Web Development Workshop",
+    replyTo: process.env.EMAIL_REPLY_TO ?? "",
   }
 }

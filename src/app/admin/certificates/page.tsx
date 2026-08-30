@@ -1,6 +1,8 @@
 import type { Metadata } from "next"
 import { Award } from "lucide-react"
 import { getCertificates } from "@/lib/admin/queries"
+import { getRemainingQuota } from "@/lib/email/apps-script"
+import { QuotaBanner } from "@/components/admin/quota-banner"
 import { PageHeader } from "@/components/admin/page-header"
 import { TableWrap, Table, Th, Td, Tr } from "@/components/admin/table"
 import { DataSurface } from "@/components/ui/surface"
@@ -36,7 +38,10 @@ export default async function CertificatesPage({ searchParams }: { searchParams:
   const sp = await searchParams
   const status = (Array.isArray(sp["status"]) ? sp["status"][0] : sp["status"]) ?? "all"
 
-  const rows = await getCertificates(status)
+  const [rows, remainingQuota] = await Promise.all([
+    getCertificates(status),
+    getRemainingQuota(),
+  ])
   const pending = rows.filter((r) => r.status !== "sent").length
   const failed = rows.filter((r) => r.status === "failed")
 
@@ -52,11 +57,13 @@ export default async function CertificatesPage({ searchParams }: { searchParams:
         action={<CertificateFilter />}
       />
 
+      <QuotaBanner remaining={remainingQuota} pending={pending} />
+
       {failed.length > 0 && status === "all" && (
         <div className="mb-4">
           <Alert tone="warn">
             {failed.length} certificate{failed.length > 1 ? "s" : ""} failed to send. The most
-            common cause is an unverified sending domain in Resend — check the error on the row and
+            common causes are a wrong shared secret or the daily Gmail quota — check the error on the row and
             retry.
           </Alert>
         </div>

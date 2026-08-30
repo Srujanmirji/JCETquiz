@@ -3,6 +3,8 @@ import "server-only"
 import { renderToBuffer } from "@react-pdf/renderer"
 import { createAdminClient } from "@/lib/supabase/admin"
 import { CertificateDocument, type CertificateData } from "@/lib/certificates/template"
+import { formatEventDate } from "@/lib/certificates/event-date"
+import { clubLogoPath } from "@/lib/certificates/logo"
 import type { Certificate, FinalResult, Profile, WorkshopSettings } from "@/types/database"
 
 export const CERTIFICATE_BUCKET = "certificates"
@@ -72,9 +74,9 @@ export function toCertificateData(ctx: CertificateContext): CertificateData {
     javascriptScore: result.javascript_score,
     pythonScore: result.python_score,
     certificateNumber: certificate.certificate_number,
-    eventDate: new Date(settings.event_date).toLocaleDateString("en-IN", {
-      day: "numeric", month: "long", year: "numeric",
-    }),
+    eventDate: formatEventDate(settings.event_date, settings.event_end_date),
+    logoPath: clubLogoPath(),
+    clubName: settings.club_name,
     collegeName: settings.college_name,
     workshopName: settings.workshop_name,
     organizerName: settings.organizer_name,
