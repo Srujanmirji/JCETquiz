@@ -45,6 +45,17 @@ export function StudentShell({
       <footer className="border-t border-line px-5 py-6">
         <p className="mx-auto max-w-6xl text-xs text-ink-faint">
           Web Development Workshop · HTML, CSS, JavaScript &amp; Python
+          <span className="mt-1 block">
+            Designed and developed by{" "}
+            <a
+              href="https://www.linkedin.com/in/srujanmirji/"
+              target="_blank"
+              rel="noreferrer"
+              className="text-accent-soft underline underline-offset-2 hover:text-ink focus-visible:text-ink"
+            >
+              Srujan Mirji
+            </a>
+          </span>
         </p>
       </footer>
     </div>
