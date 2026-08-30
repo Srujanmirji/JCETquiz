@@ -1,7 +1,12 @@
 import Image from "next/image"
 import { cn } from "@/lib/utils"
 
-/** Frame the supplied artwork's transparent margins without altering the PNG. */
+/**
+ * Frames the DC monogram out of the full club artwork.
+ *
+ * The offsets are calibrated to the original 1254x1254 asset — point this at a
+ * pre-cropped derivative and the framing silently goes wrong.
+ */
 export function Logo({ className, size = 40 }: { className?: string; size?: number }) {
   const scale = size / 640
 
@@ -11,7 +16,7 @@ export function Logo({ className, size = 40 }: { className?: string; size?: numb
       style={{ width: 805 * scale, height: size }}
     >
       <Image
-        src="/club-logo-mark.png"
+        src="/club-logo.jpeg"
         alt="JCET Developer’s Club"
         width={1254}
         height={1254}
