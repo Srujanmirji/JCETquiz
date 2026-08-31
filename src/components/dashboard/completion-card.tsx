@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { Award, BookOpen, ArrowRight } from "lucide-react"
+import { Award, BookOpen, ArrowRight, MessageSquare, ExternalLink } from "lucide-react"
 import type { FinalResult } from "@/types/database"
 import { Panel } from "@/components/ui/surface"
 import { Button } from "@/components/ui/button"
@@ -15,7 +15,15 @@ import { PASS_SCORE } from "@/lib/constants"
  * Copy rule (docs/UI-DESIGN.md): never embarrass a student. The not-eligible
  * case states the number plainly, then gives them something true to hold on to.
  */
-export function CompletionCard({ final, email }: { final: FinalResult; email: string }) {
+export function CompletionCard({
+  final,
+  email,
+  feedbackUrl,
+}: {
+  final: FinalResult
+  email: string
+  feedbackUrl?: string | null
+}) {
   const eligible = final.certificate_eligible
   const pct = Number(final.percentage)
 
@@ -71,6 +79,30 @@ export function CompletionCard({ final, email }: { final: FinalResult; email: st
           </Link>
         </Button>
       </div>
+
+      {/* Asked here because this is the moment they are still in the room and
+          still thinking about the session. An email tomorrow gets ignored. */}
+      {feedbackUrl ? (
+        <div className="mt-5 border-t border-line pt-4">
+          <a
+            href={feedbackUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group flex min-h-11 items-center gap-2.5 rounded-[var(--radius-input)] text-sm text-ink-muted transition-colors hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-canvas"
+          >
+            <MessageSquare className="size-4 shrink-0 text-accent" aria-hidden />
+            <span>
+              <span className="font-medium text-ink">How was the workshop?</span>{" "}
+              Two minutes of feedback helps us run the next one better.
+            </span>
+            <ExternalLink
+              className="size-3.5 shrink-0 text-ink-faint transition-colors group-hover:text-ink-muted"
+              aria-hidden
+            />
+            <span className="sr-only">(opens in a new tab)</span>
+          </a>
+        </div>
+      ) : null}
     </Panel>
   )
 }

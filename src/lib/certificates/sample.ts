@@ -18,6 +18,7 @@ const FALLBACK: WorkshopSettings = {
   organizer_name: "Workshop Organizer",
   organizer_title: "Faculty Coordinator",
   certificate_prefix: "WDW",
+  feedback_url: null,
   quiz_open: true,
   randomize_questions: false,
   lock_year: true,

@@ -37,6 +37,7 @@ export function SettingsForm({ settings }: { settings: WorkshopSettings }) {
       organizer_name: String(form.get("organizer_name") ?? ""),
       organizer_title: String(form.get("organizer_title") ?? ""),
       certificate_prefix: String(form.get("certificate_prefix") ?? "").toUpperCase(),
+      feedback_url: String(form.get("feedback_url") ?? "").trim(),
       quiz_open: quizOpen,
       randomize_questions: randomize,
       lock_year: lockYear,
@@ -112,6 +113,25 @@ export function SettingsForm({ settings }: { settings: WorkshopSettings }) {
 
           <Field label="Organiser title" htmlFor="organizer_title" required error={errors["organizer_title"]}>
             <Input id="organizer_title" name="organizer_title" defaultValue={settings.organizer_title} required error={errors["organizer_title"]} />
+          </Field>
+        </div>
+
+        <div className="mt-4 border-t border-line pt-4">
+          <Field
+            label="Feedback form link"
+            htmlFor="feedback_url"
+            hint="Paste your Google Form URL. Students see it the moment they finish all four quizzes, and it goes out with the certificate email. Leave blank to hide it."
+            error={errors["feedback_url"]}
+          >
+            <Input
+              id="feedback_url"
+              name="feedback_url"
+              type="url"
+              inputMode="url"
+              placeholder="https://forms.gle/..."
+              defaultValue={settings.feedback_url ?? ""}
+              error={errors["feedback_url"]}
+            />
           </Field>
         </div>
 

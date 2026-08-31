@@ -55,6 +55,16 @@ export const settingsSchema = z.object({
   organizer_name: z.string().trim().min(2).max(120),
   organizer_title: z.string().trim().min(2).max(120),
   certificate_prefix: z.string().trim().regex(/^[A-Z0-9]{2,8}$/, "2-8 uppercase letters or digits"),
+  // http/https only — z.url() alone accepts javascript:, and this URL is
+  // rendered as a link in students' browsers and inboxes.
+  feedback_url: z
+    .string()
+    .trim()
+    .url("Enter a full URL, including https://")
+    .refine((u) => /^https?:\/\//i.test(u), "Must start with http:// or https://")
+    .or(z.literal(""))
+    .nullable()
+    .optional(),
   quiz_open: z.boolean(),
   randomize_questions: z.boolean(),
   lock_year: z.boolean(),

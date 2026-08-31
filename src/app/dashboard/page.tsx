@@ -3,7 +3,7 @@ import Link from "next/link"
 import { redirect } from "next/navigation"
 import { Award, ArrowRight } from "lucide-react"
 import { requireUser, getProfile } from "@/lib/auth/guards"
-import { getStudentProgress } from "@/lib/quiz/service"
+import { getStudentProgress, getSettings } from "@/lib/quiz/service"
 import { StudentShell } from "@/components/marketing/shell"
 import { Panel, Card } from "@/components/ui/surface"
 import { Button } from "@/components/ui/button"
@@ -29,6 +29,8 @@ export default async function DashboardPage() {
   const canSeeFinal = allDone || progress.workshopComplete
   const available = progress.quizzes.find((q) => q.state === "available")
   const firstName = profile.name.split(" ")[0]
+  // Only worth a query once there is a completion card to put the link on.
+  const feedbackUrl = canSeeFinal ? ((await getSettings())?.feedback_url ?? null) : null
 
   return (
     <StudentShell width="wide" meta={<SignOutButton />}>
@@ -105,7 +107,7 @@ export default async function DashboardPage() {
 
         {/* ---- final result ---- */}
         {canSeeFinal && progress.final ? (
-          <CompletionCard final={progress.final} email={profile.email} />
+          <CompletionCard final={progress.final} email={profile.email} feedbackUrl={feedbackUrl} />
         ) : (
           <Card className="p-5">
             <p className="text-sm font-medium text-ink">Final result</p>

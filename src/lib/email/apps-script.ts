@@ -13,6 +13,7 @@ export interface CertificateEmailInput {
   certificateNumber: string
   pdf: Buffer
   downloadUrl: string | null
+  feedbackUrl: string | null
 }
 
 /**
@@ -108,6 +109,8 @@ export async function getRemainingQuota(): Promise<number | null> {
 }
 
 function certificateEmailText(i: CertificateEmailInput) {
+  // Filtering on `null` rather than falsiness — `.filter(Boolean)` would strip
+  // the blank lines too and collapse this into one unreadable block.
   return [
     `Hi ${i.studentName},`,
     ``,
@@ -117,12 +120,14 @@ function certificateEmailText(i: CertificateEmailInput) {
     `Certificate ID: ${i.certificateNumber}`,
     ``,
     `Your certificate is attached to this email as a PDF.`,
-    i.downloadUrl ? `You can also download it here: ${i.downloadUrl}` : ``,
+    i.downloadUrl ? `You can also download it here: ${i.downloadUrl}` : null,
     ``,
+    i.feedbackUrl ? `How was the workshop? Two minutes of feedback: ${i.feedbackUrl}` : null,
+    i.feedbackUrl ? `` : null,
     `Well done, and keep building.`,
     `— ${i.collegeName}`,
   ]
-    .filter(Boolean)
+    .filter((line) => line !== null)
     .join("\n")
 }
 
@@ -165,6 +170,18 @@ function certificateEmailHtml(i: CertificateEmailInput) {
         ? `<tr><td style="padding:24px 32px 0;" align="center">
              <a href="${i.downloadUrl}" style="display:inline-block;background:#F54F1B;color:#ffffff;text-decoration:none;font-size:15px;font-weight:600;padding:13px 28px;border-radius:8px;">Download your certificate</a>
              <p style="margin:10px 0 0;font-size:12px;color:#6b7684;">This link works for 7 days.</p>
+           </td></tr>`
+        : ""
+    }
+
+    ${
+      i.feedbackUrl
+        ? `<tr><td style="padding:24px 32px 0;">
+             <p style="margin:0;font-size:14px;line-height:1.6;color:#334155;border-top:1px solid #e3e8ef;padding-top:20px;">
+               <strong style="color:#12203a;">How was the workshop?</strong><br>
+               Two minutes of feedback helps us run the next one better —
+               <a href="${escapeHtml(i.feedbackUrl)}" style="color:#F54F1B;font-weight:600;">share yours here</a>.
+             </p>
            </td></tr>`
         : ""
     }

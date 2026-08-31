@@ -107,6 +107,7 @@ export interface WorkshopSettings {
   organizer_name: string
   organizer_title: string
   certificate_prefix: string
+  feedback_url: string | null
   quiz_open: boolean
   randomize_questions: boolean
   lock_year: boolean

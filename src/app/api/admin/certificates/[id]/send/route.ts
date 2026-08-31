@@ -77,6 +77,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
       certificateNumber: data.certificateNumber,
       pdf,
       downloadUrl,
+      feedbackUrl: loaded.ctx.settings.feedback_url || null,
     })
 
     // Audit trail: who sent it and when (docs/CERTIFICATES.md).
