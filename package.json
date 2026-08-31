@@ -9,7 +9,8 @@
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
     "test": "node --experimental-strip-types --import ./tests/alias-loader-register.mjs --test tests/*.test.ts",
-    "verify:db": "node --env-file=.env.local --experimental-strip-types scripts/verify-db.ts"
+    "verify:db": "node --env-file=.env.local --experimental-strip-types scripts/verify-db.ts",
+    "reset:files": "node --env-file=.env.local --experimental-strip-types scripts/clear-certificate-files.ts"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.6",
