@@ -16,7 +16,14 @@ function withExtension(path) {
   return path
 }
 
+// `server-only` is a Next.js build-time guard with no Node resolution. Stub it
+// so server modules can be exercised directly in tests.
+const STUBS = new Set(["server-only", "client-only"])
+
 export function resolve(specifier, context, next) {
+  if (STUBS.has(specifier)) {
+    return { url: "data:text/javascript,export{}", shortCircuit: true }
+  }
   if (specifier.startsWith("@/")) {
     const target = withExtension(resolvePath(SRC, specifier.slice(2)))
     return next(pathToFileURL(target).href, context)

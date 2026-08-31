@@ -59,6 +59,52 @@ export async function loadCertificateContext(
   }
 }
 
+/**
+ * Loads a student's OWN certificate for self-service download.
+ *
+ * Keyed on profile_id rather than certificate id, so a caller can only ever
+ * reach their own — there is no id to tamper with. Requires the admin to have
+ * already SENT it: docs/CERTIFICATES.md puts issuance under admin control, and
+ * this is retrieval of something already issued, not self-issuing.
+ */
+export async function loadOwnCertificate(
+  profileId: string,
+): Promise<
+  | { ok: true; ctx: CertificateContext }
+  | { ok: false; reason: "none" | "not_sent" | "not_eligible" }
+> {
+  const admin = createAdminClient()
+
+  const { data: cert } = await admin
+    .from("certificates").select("*").eq("profile_id", profileId).maybeSingle()
+  if (!cert) return { ok: false, reason: "none" }
+  const certificate = cert as Certificate
+
+  if (certificate.status !== "sent") return { ok: false, reason: "not_sent" }
+
+  const [{ data: profile }, { data: result }, { data: settings }] = await Promise.all([
+    admin.from("profiles").select("*").eq("id", profileId).maybeSingle(),
+    admin.from("final_results").select("*").eq("id", certificate.final_result_id).maybeSingle(),
+    admin.from("workshop_settings").select("*").single(),
+  ])
+
+  if (!profile || !result || !settings) return { ok: false, reason: "none" }
+
+  // Re-verified from the stored result, never from a client-supplied flag.
+  const r = result as FinalResult
+  if (!r.certificate_eligible) return { ok: false, reason: "not_eligible" }
+
+  return {
+    ok: true,
+    ctx: {
+      certificate,
+      profile: profile as Profile,
+      result: r,
+      settings: settings as WorkshopSettings,
+    },
+  }
+}
+
 export function toCertificateData(ctx: CertificateContext): CertificateData {
   const { certificate, result, settings } = ctx
 

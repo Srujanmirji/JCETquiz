@@ -1,7 +1,8 @@
-import { Trophy, BookOpen, CheckCircle2, Clock, Mail } from "lucide-react"
+import { Trophy, BookOpen, CheckCircle2, Clock, Mail, Download } from "lucide-react"
 import type { CertificateStatus as Status } from "@/types/database"
 import { Card } from "@/components/ui/surface"
 import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
 import { formatDateTime } from "@/lib/utils"
 
 /**
@@ -74,16 +75,30 @@ export function CertificateStatusCard({
             {sent ? (
               <>
                 Sent to <span className="font-medium text-ink">{email}</span>
-                {sentAt && <> on {formatDateTime(sentAt)}</>}. Check your spam folder if it has not
-                arrived.
+                {sentAt && <> on {formatDateTime(sentAt)}</>}. If it is not in your inbox, check
+                your spam folder — or just download it here.
               </>
             ) : (
               <>
                 You scored 70% or above. Your certificate will be sent to{" "}
-                <span className="font-medium text-ink">{email}</span> by the workshop admin.
+                <span className="font-medium text-ink">{email}</span> by the workshop admin, and
+                you will be able to download it here as well.
               </>
             )}
           </p>
+
+          {/* A plain link, not fetch(): the browser handles the download itself,
+              so it works with no JavaScript and survives a flaky connection. */}
+          {sent && (
+            <div className="pt-1.5">
+              <Button asChild size="sm">
+                <a href="/api/certificates/me" download>
+                  <Download className="size-4" aria-hidden />
+                  Download my certificate
+                </a>
+              </Button>
+            </div>
+          )}
         </div>
       </div>
     </Card>
