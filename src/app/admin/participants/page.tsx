@@ -5,6 +5,7 @@ import { PageHeader } from "@/components/admin/page-header"
 import { ParticipantFilters } from "@/components/admin/participant-filters"
 import { ParticipantTable } from "@/components/admin/participant-table"
 import { Pagination } from "@/components/admin/pagination"
+import { ExportButton } from "@/components/admin/export-button"
 import { Skeleton } from "@/components/ui/states"
 
 export const metadata: Metadata = { title: "Participants" }
@@ -39,6 +40,7 @@ export default async function ParticipantsPage({ searchParams }: { searchParams:
       <PageHeader
         title="Participants"
         description={`${total} registered ${total === 1 ? "student" : "students"}.`}
+        action={<ExportButton />}
       />
 
       <Suspense fallback={<Skeleton className="mb-4 h-11 w-full" />}>

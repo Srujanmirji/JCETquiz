@@ -6,6 +6,7 @@ import { ParticipantFilters } from "@/components/admin/participant-filters"
 import { ParticipantTable } from "@/components/admin/participant-table"
 import { Pagination } from "@/components/admin/pagination"
 import { SortSelect } from "@/components/admin/sort-select"
+import { ExportButton } from "@/components/admin/export-button"
 import { Skeleton } from "@/components/ui/states"
 
 export const metadata: Metadata = { title: "Quiz Results" }
@@ -37,7 +38,12 @@ export default async function ResultsPage({ searchParams }: { searchParams: Sear
       <PageHeader
         title="Quiz Results"
         description="Students who have finished all four quizzes, highest total first."
-        action={<SortSelect />}
+        action={
+          <div className="flex flex-wrap items-center gap-2.5">
+            <ExportButton label="Export results" />
+            <SortSelect />
+          </div>
+        }
       />
       <Suspense fallback={<Skeleton className="mb-4 h-11 w-full" />}>
         <ParticipantFilters branches={branches} showStatus={false} />
